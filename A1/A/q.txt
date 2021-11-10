@@ -1,0 +1,1 @@
+Client first says "Hi" and in response server says "Hello"
