@@ -14,12 +14,15 @@ int main()
     struct sockaddr_in serv_addr;
     struct sockaddr_in serverStorage;
     socklen_t addr_size;
+
     int listenfd = 0, connfd = 0, n = 0, num = 0;
     int transactionID = 0;
+    char id[100];
     char sendBuff[1025];
     char recvBuff[1024];
     int numrv;
-    int mango = 10, apple = 20, sav;
+    int apple = 20, mango = 10, sav;
+    char appleAmount[50], mangoAmount[50];
     char new1[50];
     int new, i, j = 1;
 
@@ -32,6 +35,7 @@ int main()
     serv_addr.sin_addr.s_addr = inet_addr("10.0.0.1");
     serv_addr.sin_port = htons(5000);
 
+    memset(serv_addr.sin_zero, '\0', sizeof serv_addr.sin_zero);
     bind(listenfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
 
     if (listen(listenfd, 10) == -1)
@@ -43,21 +47,28 @@ int main()
     while (1)
     {
         j = 1;
-        printf("\nAvailable items\n");
-        printf("\nProduct\tQuantity");
-        printf("\nApple\t%d\nMango\t%d\n", apple, mango);
+        // printf("\nAvailable items\n");
+        // printf("\nProduct\tQuantity");
+        // printf("\nApple\t%d\nMango\t%d\n", apple, mango);
 
         printf("\nWaiting for order...\n");
 
         addr_size = sizeof serverStorage;
-        connfd = accept(listenfd, (struct sockaddr *)NULL, NULL);
+        connfd = accept(listenfd, (struct sockaddr *)&serverStorage, &addr_size);
 
         struct sockaddr_in *cliIP = (struct sockaddr_in *)&serverStorage;
         struct in_addr ipAddr = cliIP->sin_addr;
 
         char str[INET_ADDRSTRLEN];
-
         inet_ntop(AF_INET, &ipAddr, str, INET_ADDRSTRLEN);
+
+        snprintf(appleAmount, sizeof(appleAmount), "%d", apple);
+        send(connfd, appleAmount, strlen(appleAmount), 0);
+
+        sleep(1);
+
+        snprintf(mangoAmount, sizeof(mangoAmount), "%d", mango);
+        send(connfd, mangoAmount, strlen(mangoAmount), 0);
 
         num = recv(connfd, recvBuff, sizeof(recvBuff), 0);
         if (num <= 0)
@@ -74,7 +85,7 @@ int main()
         new1[j - 1] = '\0';
         new = atoi(new1);
 
-        printf("\nClient IP is: %s", str);
+        printf("\nClient IP is: %s", inet_ntoa(serverStorage.sin_addr));
         printf("\nClient port is: %d", serverStorage.sin_port);
         printf("\nOrder Received From client : %s", recvBuff);
 
@@ -110,8 +121,8 @@ int main()
             }
         }
 
-        char id[100];
         snprintf(id, sizeof(id), "%d", transactionID);
+        memset(sendBuff, '0', sizeof(sendBuff));
         strcpy(sendBuff, "Transaction ID: ");
         strcat(sendBuff, id);
 
@@ -127,8 +138,8 @@ int main()
         printf("\n------------------------------\n");
 
         sleep(1);
-    } //End of Inner While...
+    }
 
-    close(connfd); //Close Connection Socket
+    close(connfd);
     return 0;
 }
