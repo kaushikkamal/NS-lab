@@ -34,12 +34,19 @@ int main(void)
         return 1;
     }
 
+    // read(sockfd, appleAmount, 50);
+
     recv(sockfd, appleAmount, sizeof(appleAmount), 0);
+
     apple = atoi(appleAmount);
 
+    // read(sockfd, mangoAmount, 50);
+
     recv(sockfd, mangoAmount, sizeof(mangoAmount), 0);
+
     mango = atoi(mangoAmount);
 
+    //after connection write the data to server
     printf("\nWelcome to our shop\n");
     printf("Available items\n");
     printf("\nProduct\tQuantity");
