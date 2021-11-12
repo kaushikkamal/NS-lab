@@ -18,7 +18,6 @@ int main()
     serverAddr.sin_addr.s_addr = inet_addr("10.0.0.1");
 
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
-
     bind(welcomeSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
 
     if (listen(welcomeSocket, 5) == 0)
@@ -33,7 +32,6 @@ int main()
     while (1)
     {
         addr_size = sizeof serverStorage;
-
         newSocket = accept(welcomeSocket, (struct sockaddr *)&serverStorage, &addr_size);
 
         read(newSocket, buffer, 255);
@@ -47,4 +45,3 @@ int main()
 
     return 0;
 }
-

@@ -41,10 +41,6 @@ int main()
         flag = 0;
         error = 0;
 
-        // printf("\nAvailable items\n");
-        // printf("\nProduct\tQuantity");
-        // printf("\nApple\t%d\nMango\t%d\n", apple, mango);
-
         printf("\nWaiting for order...\n");
 
         addressSize = sizeof serverStorage;
