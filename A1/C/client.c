@@ -1,22 +1,21 @@
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <netdb.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
+#include <string.h>
+#include <sys/socket.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <netdb.h>
 
-int main(void)
+int main()
 {
     int sockfd = 0, n = 0, num = 0, apple, mango;
-    char appleAmount[50], mangoAmount[50];
-    char recvBuff[1024];
-    char sendBuff[1025];
-    struct sockaddr_in serv_addr, clientAddr;
-    memset(recvBuff, '0', sizeof(recvBuff));
+    char appleAmount[50], mangoAmount[50], receiverBuffer[1024], senderBuffer[1025];
+    struct sockaddr_in serverAddress, clientAddress;
+
+    memset(receiverBuffer, '0', sizeof(receiverBuffer));
 
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -24,11 +23,11 @@ int main(void)
         return 1;
     }
 
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(5000);
-    serv_addr.sin_addr.s_addr = inet_addr("10.0.0.1");
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_port = htons(5000);
+    serverAddress.sin_addr.s_addr = inet_addr("10.0.0.1");
 
-    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    if (connect(sockfd, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) < 0)
     {
         printf("\nError : Connect Failed\n");
         return 1;
@@ -44,23 +43,23 @@ int main(void)
     printf("Available items\n");
     printf("\nProduct\tQuantity");
     printf("\nApple\t%d\nMango\t%d\n", apple, mango);
-    printf("Please enter 'buy fruitname 10' where 10 is the quantity\n");
-    fgets(sendBuff, 1025, stdin);
+    printf("\nPlease enter 'buy fruitname 10' where 10 is the quantity\n");
+    fgets(senderBuffer, 1025, stdin);
 
-    if ((send(sockfd, sendBuff, strlen(sendBuff), 0)) == -1)
+    if ((send(sockfd, senderBuffer, strlen(senderBuffer), 0)) == -1)
     {
         fprintf(stderr, "Failure Sending Message\n");
         close(sockfd);
     }
 
-    num = recv(sockfd, recvBuff, sizeof(recvBuff), 0);
+    num = recv(sockfd, receiverBuffer, sizeof(receiverBuffer), 0);
     if (num <= 0)
     {
         printf("Either Connection Closed or Error\n");
     }
 
-    recvBuff[num] = '\0';
-    printf("From Server: %s\n", recvBuff);
+    receiverBuffer[num] = '\0';
+    printf("\nFrom Server: %s\n\n", receiverBuffer);
 
     close(sockfd);
     return 0;
