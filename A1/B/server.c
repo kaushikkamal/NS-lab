@@ -9,6 +9,7 @@ int calc(char ch[255]);
 
 int main()
 {
+
     int welcomeSocket, newSocket;
 
     char buffer[1024];
@@ -20,8 +21,11 @@ int main()
     socklen_t addr_size;
 
     welcomeSocket = socket(PF_INET, SOCK_STREAM, 0);
+
     serverAddr.sin_family = AF_INET;
+
     serverAddr.sin_port = htons(7891);
+
     serverAddr.sin_addr.s_addr = inet_addr("10.0.0.1");
 
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
@@ -39,23 +43,34 @@ int main()
 
     while (1)
     {
+
         addr_size = sizeof serverStorage;
+
         newSocket = accept(welcomeSocket, (struct sockaddr *)&serverStorage, &addr_size);
 
         struct sockaddr_in *cliIP = (struct sockaddr_in *)&serverStorage;
+
         struct in_addr ipAddr = cliIP->sin_addr;
 
         char str[INET_ADDRSTRLEN];
+
         inet_ntop(AF_INET, &ipAddr, str, INET_ADDRSTRLEN);
+
         char *ID = cliIP->sin_zero;
+
         char str2[8];
 
         inet_ntop(AF_INET, &ID, str2, 8);
+
+        /* ---- Receive message from client, if any ---- */
 
         recv(newSocket, buffer, 1024, 0);
 
         printf("\nFrom Client: %s\n", buffer);
 
+        /*---- Send message to the socket of the incoming connection ----*/
+
+        //   strcpy(res, calc(buffer));
         result = calc(buffer);
 
         send(newSocket, &result, 4, 0);

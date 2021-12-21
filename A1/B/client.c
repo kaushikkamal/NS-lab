@@ -7,11 +7,15 @@
 
 int main(int argc, char *argv[])
 {
+
     int clientSocket;
+
     char buffer[1024];
+
     int result;
 
     struct sockaddr_in serverAddr, clientAddr;
+
     socklen_t addr_size;
 
     clientSocket = socket(PF_INET, SOCK_STREAM, 0);

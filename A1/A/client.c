@@ -16,6 +16,7 @@ int main()
   serverAddr.sin_addr.s_addr = inet_addr("10.0.0.1");
 
   memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
+
   connect(clientSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
 
   strcpy(buffer, "Hi\n");
